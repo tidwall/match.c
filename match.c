@@ -15,48 +15,23 @@
 // 	 '*'         matches any sequence of non-Separator characters
 // 	 '?'         matches any single non-Separator character
 // 	 c           matches character c (c != '*', '?')
-static bool deep_match(char *pat, int plen, char *str, int slen)  {
+bool match(const char *pat, int plen, const char *str, int slen)  {
+    if (plen < 0) plen = strlen(pat);
+    if (slen < 0) slen = strlen(str);
+    if (plen == 1 && pat[0] == '*') return true;
     while (plen > 0) {
-        switch (pat[0]) {
-        case '?':
-            if (slen == 0) {
-                return false;
-            }
-            break;
-        case '*':
-            if (deep_match(pat+1, plen-1, str, slen)) {
-                return true;
-            }
-            if (slen == 0) {
-                return false;
-            }
+        if (pat[0] == '*') {
+            if (match(pat+1, plen-1, str, slen)) return true;
+            if (slen == 0) return false;
             str++; slen--;
-            continue;
-        default:
-            if (slen == 0) {
-                return false;
-            }
-            if (str[0] != pat[0]) {
-                return false;
-            }
+        } else {
+            if (slen == 0) return false;
+            if (pat[0] != '?' && str[0] != pat[0]) return false;
+            pat++; plen--;
+            str++; slen--;
         }
-        pat++; plen--;
-        str++; slen--;
     }
     return slen == 0 && plen == 0;
-}
-
-bool match(const char *pat, int plen, const char *str, int slen) {
-    if (plen < 0) {
-        plen = strlen(pat);
-    }
-    if (slen < 0) {
-        slen = strlen(str);
-    }
-    if (plen == 1 && pat[0] == '*') {
-        return true;
-    }
-    return deep_match((char*)pat, plen, (char*)str, slen);
 }
 
 #ifdef MATCH_TEST
