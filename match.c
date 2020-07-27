@@ -18,9 +18,9 @@
 bool match(const char *pat, int plen, const char *str, int slen)  {
     if (plen < 0) plen = strlen(pat);
     if (slen < 0) slen = strlen(str);
-    if (plen == 1 && pat[0] == '*') return true;
     while (plen > 0) {
         if (pat[0] == '*') {
+            if (plen == 1) return true;
             if (match(pat+1, plen-1, str, slen)) return true;
             if (slen == 0) return false;
             str++; slen--;
