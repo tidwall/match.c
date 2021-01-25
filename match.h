@@ -7,6 +7,6 @@
 
 #include <stdbool.h>
 
-bool match(const char *pat, int plen, const char *str, int slen);
+bool match(const char *pat, long plen, const char *str, long slen);
 
 #endif
